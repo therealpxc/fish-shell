@@ -46,10 +46,13 @@ matrix:
       osx_image: xcode8
       before_install:
         - brew update
-        - brew install pcre2 # use system PCRE2
+        - brew install pcre2 gnu-tar doxygen # use system PCRE2
         - brew outdated xctool || brew upgrade xctool # for xcode... soon.
       env:
         - CXXFLAGS="-g -lstdc++"
+      before_deploy:
+        - mkdir -p $HOME/staged
+        - env FISH_ARTEFACT_PATH=$HOME/staged ./build_tools/make_tarball.sh
   fast_finish: true
 
 script:
@@ -74,3 +77,19 @@ notifications:
     urls:
       #- https://webhooks.gitter.im/e/61821cec3015bf0f8bb1
       secure: fPfOmxnC3MCsfR1oocVFeWLawGcRZkn+8fNHlSOeZ+SqqoZfcCHgQTvQ22TqmVl1yvkXbNlaXjo6dbVzTOAh7r7H0bRMEKBVh3dQS7wqjB1sKivpXd8PAS3BTj5MQpGeJzdHnDuwVlwDktGtfHfhGeq1Go/4IosOq8u+6RTe28g=
+
+deploy:
+  provider: s3
+  access_key_id:
+    secure: "jxFz+eAyP7AkIQ+70iw2se853eR0aSLX5WlzS2WhM3uMmtV0k5W+yPJx5tgfN/XfXTr7QOmYG0KpqYoAmwpWFagn/2hE3JAoYZlblaKC8isEnWpucBscAG/4qDKP5y9b+WOfQ+eCjOUsgvXJw/yrBQ+J5mWaYEcO07N599jI/n0="
+  secret_access_key:
+    secure: IpCEQ3Hbx6dMuFTLgyH2JVJnMt5BaFNbq+aEbhCRieVE7FamgDnPhZ2vbF9yDZLmVLvdtkXVsGp3UFFanGnYS0pO7Fa45rHHnmvA7sNvjZfnf6ctd7vV/XJoFk42pAmcUyZZ7RU3hulILQW3PDaqSL+4gquKgCZyMAhiNYzsZSU=
+  bucket: fishshell.com
+  local-dir: staged
+  upload-dir: travis_uploaded
+  acl: public_read
+  skip_cleanup: true
+  on:
+    repo: fish-shell/fish-shell
+    branch: macos_continuous_deployment_experiment
+    condition: $TRAVIS_OS_NAME = osx

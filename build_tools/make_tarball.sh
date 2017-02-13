@@ -8,6 +8,7 @@
 
 # Exit on error
 set -e
+set -x
 
 # We wil generate a tarball with a prefix "fish-VERSION"
 # git can do that automatically for us via git-archive
