@@ -8,11 +8,17 @@ matrix:
       compiler: gcc
       addons:
         apt:
+          sources:
+            # For doxygen
+            - sourceline: 'ppa:libreoffice/libreoffice-4-4'
           packages:
             - bc
             - expect
             - gettext
             - libncurses5-dev
+            - doxygen
+      env:
+        - FISH_DO_DEPLOY=1
     - os: linux
       compiler: gcc
       addons:
@@ -50,9 +56,6 @@ matrix:
         - brew outdated xctool || brew upgrade xctool # for xcode... soon.
       env:
         - CXXFLAGS="-g -lstdc++"
-      before_deploy:
-        - mkdir -p $HOME/staged
-        - env FISH_ARTEFACT_PATH=$HOME/staged ./build_tools/make_tarball.sh
   fast_finish: true
 
 script:
@@ -78,6 +81,10 @@ notifications:
       #- https://webhooks.gitter.im/e/61821cec3015bf0f8bb1
       secure: fPfOmxnC3MCsfR1oocVFeWLawGcRZkn+8fNHlSOeZ+SqqoZfcCHgQTvQ22TqmVl1yvkXbNlaXjo6dbVzTOAh7r7H0bRMEKBVh3dQS7wqjB1sKivpXd8PAS3BTj5MQpGeJzdHnDuwVlwDktGtfHfhGeq1Go/4IosOq8u+6RTe28g=
 
+before_deploy:
+  - mkdir -p $HOME/staged
+  - env FISH_ARTEFACT_PATH=$HOME/staged ./build_tools/make_tarball.sh
+
 deploy:
   provider: s3
   access_key_id:
@@ -85,11 +92,11 @@ deploy:
   secret_access_key:
     secure: IpCEQ3Hbx6dMuFTLgyH2JVJnMt5BaFNbq+aEbhCRieVE7FamgDnPhZ2vbF9yDZLmVLvdtkXVsGp3UFFanGnYS0pO7Fa45rHHnmvA7sNvjZfnf6ctd7vV/XJoFk42pAmcUyZZ7RU3hulILQW3PDaqSL+4gquKgCZyMAhiNYzsZSU=
   bucket: fishshell.com
-  local-dir: staged
+  local-dir: $HOME/staged
   upload-dir: travis_uploaded
   acl: public_read
   skip_cleanup: true
   on:
     repo: fish-shell/fish-shell
     branch: macos_continuous_deployment_experiment
-    condition: $TRAVIS_OS_NAME = osx
+    condition: $FISH_DO_DEPLOY = 1
