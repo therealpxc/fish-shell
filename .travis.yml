@@ -18,7 +18,7 @@ matrix:
             - libncurses5-dev
             - doxygen
       env:
-        - FISH_DO_DEPLOY=1
+        - FISH_DO_DEPLOY_TARBALL=1
     - os: linux
       compiler: gcc
       addons:
@@ -56,7 +56,12 @@ matrix:
         - brew outdated xctool || brew upgrade xctool # for xcode... soon.
       env:
         - CXXFLAGS="-g -lstdc++"
+        - FISH_DO_DEPLOY_PKG=1
   fast_finish: true
+
+env:
+  global:
+    - FISH_ARTEFACT_PATH=$HOME/staged
 
 script:
   - autoreconf
@@ -83,7 +88,8 @@ notifications:
 
 before_deploy:
   - mkdir -p $HOME/staged
-  - env FISH_ARTEFACT_PATH=$HOME/staged ./build_tools/make_tarball.sh
+  - test -n "$FISH_DO_DEPLOY_TARBALL" && ./build_tools/make_tarball.sh
+  - test -n "$FISH_DO_DEPLOY_PKG" && ./build_tools/make_pkg.sh
 
 deploy:
   provider: s3
@@ -99,4 +105,4 @@ deploy:
   on:
     repo: fish-shell/fish-shell
     branch: macos_continuous_deployment_experiment
-    condition: $FISH_DO_DEPLOY = 1
+    condition: $FISH_DO_DEPLOY_PKG = 1 || $FISH_DO_DEPLOY_TARBALL = 1
