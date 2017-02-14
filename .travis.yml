@@ -88,8 +88,8 @@ notifications:
 
 before_deploy:
   - mkdir -p $HOME/staged
-  - test -n "$FISH_DO_DEPLOY_TARBALL" && ./build_tools/make_tarball.sh
-  - test -n "$FISH_DO_DEPLOY_PKG" && ./build_tools/make_pkg.sh
+  - test -n "$FISH_DO_DEPLOY_TARBALL" && ./build_tools/make_tarball.sh ; true
+  - test -n "$FISH_DO_DEPLOY_PKG" && ./build_tools/make_pkg.sh ; true
 
 deploy:
   provider: s3
