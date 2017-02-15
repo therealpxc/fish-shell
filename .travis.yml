@@ -64,7 +64,7 @@ env:
     - FISH_ARTEFACT_PATH=$HOME/staged
 
 script:
-  - autoreconf
+  - autoreconf --no-recursive
   - ./configure --prefix=$HOME/prefix || cat config.log
   - make -j2
   - make install
