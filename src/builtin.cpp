@@ -60,6 +60,7 @@
 #include "intern.h"
 #include "io.h"
 #include "parse_constants.h"
+#include "parse_tree.h"
 #include "parse_util.h"
 #include "parser.h"
 #include "parser_keywords.h"
@@ -3247,7 +3248,7 @@ static int builtin_history(parser_t &parser, io_streams_t &streams, wchar_t **ar
     return status;
 }
 
-#if 0
+#if 1
 // Disabled for the 2.2.0 release: https://github.com/fish-shell/fish-shell/issues/1809.
 int builtin_parse(parser_t &parser, io_streams_t &streams, wchar_t **argv)
 {
@@ -3349,7 +3350,7 @@ int builtin_realpath(parser_t &parser, io_streams_t &streams, wchar_t **argv) {
 // NOTE: These must be kept in sorted order!
 static const builtin_data_t builtin_datas[] = {
     {L"[", &builtin_test, N_(L"Test a condition")},
-#if 0
+#if 1
     // Disabled for the 2.2.0 release: https://github.com/fish-shell/fish-shell/issues/1809.
     {       L"__fish_parse",  &builtin_parse, N_(L"Try out the new parser")  },
 #endif
